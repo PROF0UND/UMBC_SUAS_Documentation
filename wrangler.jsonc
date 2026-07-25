@@ -4,8 +4,7 @@
 	"compatibility_flags": ["global_fetch_strictly_public"],
 	"name": "umbc-suas-documentation",
 	"assets": {
-		"directory": "./dist",
-		"binding": "ASSETS"
+		"directory": "./dist"
 	},
 	"observability": {
 		"enabled": true
