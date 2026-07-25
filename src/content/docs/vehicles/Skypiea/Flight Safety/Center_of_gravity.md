@@ -7,3 +7,5 @@ sidebar:
 ---
 
 Safety is our number one priority. Before every flight, we go through a carefully crafted safety checklist made by the contribution of the entire team. The goal of this checklist is to do a top-to-bottom inspection of all main components of the aircraft.
+
+<video src="/videos/cog.mov" controls width="100%"></video>
