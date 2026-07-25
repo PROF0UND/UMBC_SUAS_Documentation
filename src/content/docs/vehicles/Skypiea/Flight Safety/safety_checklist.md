@@ -15,5 +15,5 @@ An assigned safety officer is responsible to narrate and go through the checklis
 Follwing is the full safety checklist:
 
 
-<iframe src="/docs/pdfs/safety_checklist.pdf" width="100%" height="800px" style="border: none; display: block; min-height: 600px;"></iframe>
+<iframe src="/pdfs/safety_checklist.pdf" width="100%" height="800px" style="border: none; display: block; min-height: 600px;"></iframe>
 

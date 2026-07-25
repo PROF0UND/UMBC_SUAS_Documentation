@@ -17,11 +17,11 @@ The Mateksys H743 WLITE serves as the central avionics hub for Skypiea, coordina
 | Port     | UART  | Baud Rate | Peripheral                                                | Notes                        |
 | -------- | ----- | --------- | ----------------------------------------------------------- | ----------------------------- |
 | Serial 1 | UART7 | —         | Raspberry Pi                                               | Companion computer interface |
-| Serial 2 | UART1 | 115200    | [Rangefinder](/docs/vehicles/skypiea/rangefinder)         | Lidar altimeter               |
+| Serial 2 | UART1 | 115200    | [Rangefinder](/vehicles/skypiea/avionics/rangefinder)         | Lidar altimeter               |
 | Serial 3 | UART2 | 57600     | GPS                                                        | SwapRxTx enabled              |
 | Serial 4 | UART3 | —         | RCIN                                                       | Radio control input           |
 | Serial 7 | UART6 | —         | MAVLink2                                                   | Telemetry/GCS link            |
-| I2C2     | I2C   | —         | [Air speed sensor](/docs/vehicles/skypiea/airspeed-sensor) | Airspeed measurement          |
+| I2C2     | I2C   | —         | [Air speed sensor](/vehicles/skypiea/avionics/airspeed-sensor) | Airspeed measurement          |
 
 ![Mission Planner's Setup > Serial Ports screen showing Skypiea's UART baud rates and protocols: UART1 at 115200 for Rangefinder, UART2 at 57600 for GPS, UART3 at 115200 for RCIN, UART6 at 57600 for MAVLink2](assets/Pasted_image_20260623025151.png)
 

@@ -39,5 +39,5 @@ The **Mateksys H743 WLITE** was selected as Skypiea's primary flight controller 
 
 ## Documentation
 
-[Mateksys H743-WLITE Manual (PDF)](/docs/pdfs/H743-WLITE_Manual.pdf)
+[Mateksys H743-WLITE Manual (PDF)](/pdfs/H743-WLITE_Manual.pdf)
 
