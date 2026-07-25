@@ -2,8 +2,6 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
-import cloudflare from '@astrojs/cloudflare';
-
 // This project is built independently from the main site (../) and its output is
 // merged into the main site's `dist/docs/` at deploy time — see ../README or ask
 // before assuming a build/deploy pipeline exists for this yet.
@@ -22,6 +20,4 @@ export default defineConfig({
       ],
     }),
   ],
-
-  adapter: cloudflare(),
 });
