@@ -1,51 +1,83 @@
-# Starlight Starter Kit: Basics
+# UMBC SUAS Documentation
 
-[![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
+Documentation site for UMBC's Student Unmanned Aerial Systems (SUAS) vehicles, built with [Astro](https://astro.build) + [Starlight](https://starlight.astro.build), deployed to Cloudflare Workers.
 
-```
-npm create astro@latest -- --template starlight
-```
+Live site: https://umbc-suas-documentation.1872star.workers.dev/
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro + Starlight project, you'll see the following folders and files:
+## Running locally
 
 ```
-.
-├── public/
-├── src/
-│   ├── assets/
-│   ├── content/
-│   │   └── docs/
-│   └── content.config.ts
-├── astro.config.mjs
-├── package.json
-└── tsconfig.json
+npm install
+npm run dev -- --background
 ```
 
-Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name.
+Then open **http://localhost:4321** in your browser. The dev server hot-reloads, so edits to any `.md` file show up immediately — no restart needed.
 
-Images can be added to `src/assets/` and embedded in Markdown with a relative link.
+To stop it:
 
-Static assets, like favicons, can be placed in the `public/` directory.
+```
+npx astro dev stop
+```
 
-## 🧞 Commands
+Other useful commands while it's running in the background:
 
-All commands are run from the root of the project, from a terminal:
+```
+npx astro dev status   # check if it's running
+npx astro dev logs     # view server output
+```
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## Where the documentation lives
 
-`cd docs && npx astro dev stop 2>&1` to stop
+All actual documentation content is Markdown files under `src/content/docs/vehicles/`:
 
-## 👀 Want to learn more?
+```
+src/content/docs/
+├── index.md                     # site homepage
+└── vehicles/
+    ├── Skypiea/
+    │   ├── index.md             # vehicle overview page
+    │   ├── Avionics/            # flight controller, GPS, RC, telemetry, sensors...
+    │   ├── Manufacturing/       # fuselage, wing, tail, landing gear, ground steering
+    │   └── Flight Safety/       # safety checklist, arming switch, center of gravity
+    ├── Antenna Tracker/
+    └── Standard Testing Drone/
+```
 
-Check out [Starlight’s docs](https://starlight.astro.build/), read [the Astro documentation](https://docs.astro.build), or jump into the [Astro Discord server](https://astro.build/chat).
+- Each `.md` file becomes a page. The URL is based on its folder/file path (lowercased), e.g. `Skypiea/Avionics/flight-controller.md` → `/vehicles/skypiea/avionics/flight-controller`.
+- Sidebar order/labels are set per-page in that file's frontmatter (`sidebar.order`, `sidebar.label`).
+- Images referenced with relative paths (e.g. `![alt](assets/photo.png)`) live in an `assets/` folder next to the page and get optimized automatically by Astro.
+- Videos and PDFs are **not** processed by Astro's image pipeline — they go in `public/` (e.g. `public/pdfs/`, `public/videos/`) and are referenced with an absolute path from the site root (e.g. `/pdfs/file.pdf`, `/videos/file.mp4`), not a relative one.
+
+## Adding a new page
+
+1. Create a new `.md` file under the relevant vehicle folder in `src/content/docs/vehicles/`.
+2. Add frontmatter with at least `title` and `description`, plus a `sidebar.order`/`sidebar.label` if you want to control its position.
+3. Run the dev server and check the page renders and the sidebar link works before pushing.
+
+## Deploying
+
+Pushing to the main branch triggers an automatic build + deploy via Cloudflare (Workers, using `wrangler.jsonc` + static assets from `./dist/`). There's no manual deploy step — just commit and push.
+
+If you need to test the production build output locally first:
+
+```
+npm run build
+npm run preview
+```
+
+## Commands reference
+
+| Command                    | Action                                                  |
+| :-------------------------- | :------------------------------------------------------ |
+| `npm install`               | Install dependencies                                     |
+| `npm run dev -- --background` | Start local dev server at `localhost:4321` in the background |
+| `npx astro dev stop`        | Stop the background dev server                           |
+| `npx astro dev status`      | Check whether the dev server is running                  |
+| `npx astro dev logs`        | View dev server logs                                      |
+| `npm run build`             | Build the production site to `./dist/`                   |
+| `npm run preview`           | Build, then preview the production build via Wrangler    |
+| `npm run astro -- --help`   | See all Astro CLI options                                 |
+
+## Learn more
+
+[Starlight docs](https://starlight.astro.build/) · [Astro docs](https://docs.astro.build)
