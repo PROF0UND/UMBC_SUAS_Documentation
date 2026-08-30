@@ -6,7 +6,11 @@ hero:
   tagline: Documentation for UMBC's Student Unmanned Aerial Systems vehicles.
   actions:
     - text: View Vehicles
-      link: /vehicles/skypiea/
+      link: /vehicles/skypiea
       icon: right-arrow
       variant: primary
+    - text: View Flight Logs
+      link: /vehicles/skypiea/flight-logs
+      icon: right-arrow
+      variant: secondary
 ---
