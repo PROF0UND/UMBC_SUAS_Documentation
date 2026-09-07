@@ -10,7 +10,7 @@ hero:
       icon: right-arrow
       variant: primary
     - text: View Flight Logs
-      link: /vehicles/skypiea/flight-logs
+      link: /flight-logs
       icon: right-arrow
       variant: secondary
 ---

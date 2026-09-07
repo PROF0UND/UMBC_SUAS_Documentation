@@ -6,4 +6,4 @@ sidebar:
   label: 1.1.3 Airspeed Sensor
 ---
 
-FTestign
+The mission is the fly a 1000ft distance out

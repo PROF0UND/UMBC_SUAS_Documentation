@@ -17,6 +17,7 @@ export default defineConfig({
       // TODO: add a `social` entry (e.g. GitHub) once the team repo/handles are settled.
       sidebar: [
         { label: 'Vehicles', items: [{ autogenerate: { directory: 'vehicles' } }] },
+        { label: 'Flight Logs', items: [{ autogenerate: { directory: 'Flight Logs' } }] },
       ],
     }),
   ],
