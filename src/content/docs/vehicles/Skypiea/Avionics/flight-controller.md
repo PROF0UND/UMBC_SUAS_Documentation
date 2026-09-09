@@ -8,6 +8,17 @@ sidebar:
 
 ## Hardware Selection: Mateksys H743 WLITE
 
+## Flashing Firmware
+
+To flash firmware on the SD card:
+1. Go to [ArduPilot Download Center](https://firmware.ardupilot.org/Plane/stable-4.7.1/)
+2. Click the latest stable folder.
+3. Use the `MatekH743`
+4. It should be this link: [Link to the correct firmware](https://firmware.ardupilot.org/Plane/stable-4.7.1/MatekH743/)
+5. Download the file ending in .apj (e.g., [arduplane.apj](/firmware/arduplane.apj)).
+6. Remove the microSD card from your Matek H743-WLITE and plug it into your computer.
+7. Copy the downloaded arduplane.apj file directly onto the root directory (the main folder, not inside any subfolders) of the SD card.Do not rename it. Leave the file name exactly as arduplane.apj
+
 ### Selection Rationale
 
 The **Mateksys H743 WLITE** was selected as Skypiea's primary flight controller based on the following key requirements:
@@ -41,3 +52,8 @@ The **Mateksys H743 WLITE** was selected as Skypiea's primary flight controller 
 
 [Mateksys H743-WLITE Manual (PDF)](/pdfs/H743-WLITE_Manual.pdf)
 
+---
+
+## Controls
+
+To make the aircraft take tighter turns, set `NAVL1_PERIOD` to a lower value
