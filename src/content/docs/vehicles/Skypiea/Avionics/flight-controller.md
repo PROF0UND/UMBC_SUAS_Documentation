@@ -15,9 +15,10 @@ To flash firmware on the SD card:
 2. Click the latest stable folder.
 3. Use the `MatekH743`
 4. It should be this link: [Link to the correct firmware](https://firmware.ardupilot.org/Plane/stable-4.7.1/MatekH743/)
-5. Download the file ending in .apj (e.g., [arduplane.apj](/firmware/arduplane.apj)).
+5. Download the file ending in .abin (e.g., [arduplane.abin](/firmware/arduplane.abin)).
 6. Remove the microSD card from your Matek H743-WLITE and plug it into your computer.
-7. Copy the downloaded arduplane.apj file directly onto the root directory (the main folder, not inside any subfolders) of the SD card.Do not rename it. Leave the file name exactly as arduplane.apj
+7. Copy the downloaded `arduplane.abin` file directly onto the root directory (the main folder, not inside any subfolders) of the SD card.
+8. Rename it to `ardupilot.abin`
 
 ### Selection Rationale
 
