@@ -74,7 +74,7 @@ The aircraft's right wing makes contact with the ground at a ground speed of abo
 
 ![Skypiea corpse](skypiea_corpse.jpg)
 
-The crash was especially heartbreaking for the SUAS competition team since the development of the aircraft took time, energy, money and sacrifices from the members. The crash being the day before the competition travel date was also unfortunate. As a result, UMBC SUAS decided to not go to the competition and forfeit the mission demonstration points of the competition. (I am not editing/reading this section agian)
+The crash was especially heartbreaking for the SUAS competition team since the development of the aircraft took time, energy and sacrifices from the members. The crash being the day before the competition travel date was also unfortunate. As a result, UMBC SUAS decided to not go to the competition and forfeit the mission demonstration points of the competition. (I am not editing/reading this section agian)
 
 ![SUAS_team_with_skypiea_corpse](SUAS_team_with_skypiea_corpse.jpg)
 
@@ -88,12 +88,14 @@ _We knew the world would not be the same. A few people laughed, a few people cri
 
 ---
 ## 1.3 What Caused This?
+1. Insane amount of roll requested by the autopilot
+2. Less amount of test flights on prototype plane to fine tune roll limit values
+3. Delayed response from the safety pilot
 
 
 ### 1.3.1 Analysis
 
----
-## 1.4 Pilot Interventions
+## 1.3.2 Pilot Interventions
 
 
 ---
