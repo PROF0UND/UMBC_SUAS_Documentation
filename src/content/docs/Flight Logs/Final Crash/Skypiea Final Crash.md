@@ -77,11 +77,13 @@ The aircraft's right wing makes contact with the ground at a ground speed of abo
 The crash was especially heartbreaking for the SUAS competition team since the development of the aircraft took time, energy, money and sacrifices from the members. The crash being the day before the competition travel date was also unfortunate. As a result, UMBC SUAS decided to not go to the competition and forfeit the mission demonstration points of the competition. (I am not editing/reading this section agian)
 
 ![SUAS_team_with_skypiea_corpse](SUAS_team_with_skypiea_corpse.jpg)
-![SUAS_team_with_skypiea_corpse2](SUAS_team_with_skypiea_corpse2.jpg)
+
 
 The team lead (Ben Bazarsuren) and the team lead intern (Sitora Chorshanbaeva) kept an optimistic approach to this calamity, and organized cleanup. Their level-headedness was commendable and allowed smooth operations after the crash. 
 
-We knew the world would not be the same. A few people laughed, a few people cried. Most people were silent. 
+![SUAS_team_with_skypiea_corpse2](SUAS_team_with_skypiea_corpse2.jpg)
+
+_We knew the world would not be the same. A few people laughed, a few people cried. Most people were silent._
 
 ---
 ## 1.3 What Caused This?
