@@ -46,7 +46,7 @@ This is the trimmed-down footage of just the crash (and the events leading up to
 The flight logs were pulled directly from the on board SD card blackbox on the skypiea flight controller. These logs can be analysed using any plotting software. The plotting software used in this analysis is the [Ardupilot UAV Logger](https://plot.ardupilot.org/#/). To test this yourself, simply drop the log .bin file into the plotter.
 
 ### 1.3.1 Useful resources:
-1. [Crash Flight Log (00000284.BIN)](/flight_logs/00000284.BIN)
+1. [Crash Flight Log (Download Here)](/flight_logs/00000284.BIN)
 2. [Ardupilot UAV Logger](https://plot.ardupilot.org/#/)
 
 
@@ -84,6 +84,7 @@ The team lead (Ben Bazarsuren) and the team lead intern (Sitora Chorshanbaeva) k
 ![SUAS_team_with_skypiea_corpse2](SUAS_team_with_skypiea_corpse2.jpg)
 
 _We knew the world would not be the same. A few people laughed, a few people cried. Most people were silent._
+(Im going to stop writing this section since this is turning more into a journal entry)
 
 ---
 ## 1.3 What Caused This?
