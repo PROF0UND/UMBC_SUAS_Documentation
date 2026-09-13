@@ -36,3 +36,15 @@ This is the full un-edited flight video.
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
   allowfullscreen>
 </iframe>
+
+This is the trimmed-down footage of just the crash (and the events leading up to it).
+
+---
+
+## 1.3 Flight Logs:
+
+The flight logs were pulled directly from the on board SD card blackbox on the skypiea flight controller. These logs can be analysed using any plotting software. The plotting software used in this analysis is the [Ardupilot UAV Logger](https://plot.ardupilot.org/#/). To test this yourself, simply drop the log .bin file into the plotter.
+
+### 1.3.1 Useful resources:
+1. [Crash Flight Log (00000284.BIN)](/flight_logs/00000284.BIN)
+2. [Ardupilot UAV Logger](https://plot.ardupilot.org/#/)
