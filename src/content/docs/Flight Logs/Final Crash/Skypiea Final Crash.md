@@ -93,12 +93,11 @@ _We knew the world would not be the same. A few people laughed, a few people cri
 In order to analyze and hopefully detect the point of failure, the most probable causes are listed and individually investigated by examining the logs collected from the flight.
 
 The most probable causes of the crash are:
-1. Absurd amount of roll requested by the autopilot.
-2. Incorrect parameter settings
-3. Skewed autotune data. Elevator not autotuned.
-4. Delayed response from the safety pilot.
+1. Unsafe roll limit configuration.
+2. Reduced elevator authority following control horn replacement, uncorrected by re-autotuning.
+3. Delayed safety pilot intervention during the second excursion, driven by hesitation to override the autopilot.
 
-### 1.3.1 Analysis
+### 1.3.1 Context
 Before we delve into the analysis of the each proposed failure, it is important to review the flight footage to contextualize ourselves. 
 
 <iframe
@@ -118,7 +117,7 @@ The Green-ish box on the bottom left corner of the screen indicates the RC input
 3. The pilot switches back to AUTO to continue the mission, and the aircraft demonstrates the same extreme banking.
 4. The pilot fully pitches up and switches to FBWA to level out the flight once again. This time however, the aircraft is too close to the ground.
 
-## Detailed Event Analysis:
+## 1.3.2 Detailed Event Analysis:
 
 The flight log (`00000284.BIN`) and parameter file (`00000284_BIN.param`) were cross-referenced against the flight footage to establish an exact timeline. All timestamps below are seconds from log start (`t=0` at arm).
 
@@ -126,61 +125,40 @@ The flight log (`00000284.BIN`) and parameter file (`00000284_BIN.param`) were c
 
 The mission was a 5-waypoint loop flown 3 times. The WP1→WP2 leg — the same turn that ultimately fails — was flown cleanly twice before the crash:
 
-| Lap | Time window | Peak roll | Peak `DesRoll` (commanded) | Airspeed range |
+| Lap | Time window | Peak roll | Peak `DesRoll` (commanded) | Pitch tracking error (mean / max) |
 |---|---|---|---|---|
-| 1 | 71.9–81.3s | -57.8° | -59.7° | 19.0–23.2 m/s |
-| 2 | 134.6–144.5s | -59.5° | -57.7° | 17.9–22.2 m/s |
-| **3 (crash)** | **249.7–275.0s** | **-102.5° / +105.9°** | **-79.1°** | **14.8–29.1 m/s** |
+| 1 & 2 | 71.9–144.5s | -57.8° / -59.5° | -59.7° / -57.7° | 1.1° / 9.2° |
+| **3 (crash)** | **249.7–275.0s** | **-102.5° / +105.9°** | **-79.1°** | **20.6–28.5° / up to 110°** |
 
-On laps 1 and 2, the autopilot commands a consistent ~58–60° bank and the aircraft tracks it. On lap 3, the same maneuver escalates into two distinct, worsening loss-of-control events. This comparison is the clearest evidence in the log that something specific to lap 3 broke the pattern — it rules out "this maneuver is inherently unsafe" (it worked twice) and points instead at a lap-3-specific trigger compounded by a control architecture that could not contain it.
+On laps 1 and 2, the commanded bank stayed within a consistent ~58–60°, well inside the aircraft's configured `ROLL_LIMIT_DEG = 80.0°`, and the aircraft tracked it closely. Lap 3 targets a similar turn, but the outcome — and the underlying control authority — is markedly different. This establishes that laps 1 and 2 succeeding was not proof the aircraft was safely configured; it was a fluke of not yet having encountered conditions that exposed the unsafe roll limit and the weakened elevator.
 
 ### Excursion 1 — t ≈ 249.9–260.1s
 
-At **t=249.92s**, `DesRoll` snaps from -6.6° to **-61.2°** as AUTO begins the turn — consistent with the two prior laps. But this time the aircraft does not hold the turn; it overshoots to **-102.5° roll** and **-48.1° pitch (nose-down)** by t=253.4s. Airspeed and AOA confirm this is a genuine stall event, not just a steep bank: AOA reaches **15.4°** at t=252.8s and airspeed troughs at **14.85 m/s** (t=261.0s), against a minimum airspeed setting of `AIRSPEED_MIN=12 m/s`.
+At **t=249.92s**, `DesRoll` snaps to **-61.2°** as AUTO begins the turn — a bank angle consistent with, and still within limits of, the two prior successful laps. This confirms the autopilot's initial request was not itself unreasonable. What follows is not a repeat of laps 1 and 2, however: the aircraft overshoots the commanded angle and continues rolling well past it, reaching **-102.5° roll** at t=253.4s — 22.5° beyond the aircraft's own `ROLL_LIMIT_DEG = 80.0°` ceiling. Airspeed drops to **14.85 m/s** against an `AIRSPEED_MIN = 12 m/s` floor, and AOA spikes to **15.4°**, confirming a genuine stall/overshoot rather than a controlled steep turn.
 
-The pilot's remembered account — having control before switching to FBWA — is correct, but the parameter file shows why the aircraft's response to that control was not what would normally be expected. `STICK_MIXING = 0` (Disabled) in the parameter dump. Per ArduPilot's own documentation, this parameter is what allows pilot stick input to blend with and override the autopilot in AUTO mode — with it set to 0, that channel is closed.
+The safety pilot brought the aircraft back to level. This is directly supported by the data: achieved roll during this window correlates strongly with the pilot's stick input at zero time lag (r = -0.70), while it correlates only weakly with the autopilot's own `DesRoll` command, which itself lags 1.3 seconds behind the aircraft's actual attitude — i.e., the autopilot's commanded roll was reacting to where the plane already was, not leading it back to level. The pilot's correction is what brought roll from -90°+ back toward 0° by t≈260s; the `MODE` log confirms the switch to FBWA is logged at **t=259.92s**, immediately after roll had already been walked back to -23.8° by manual correction, which is when the pilot formally took full mode authority to hold the recovery.
 
-This is confirmed directly in the log, not just inferred from the parameter. Between t=252.8s and t=259.9s, `RCIN` (pilot roll stick) swings through its full range — 988 to 1751 — while `RCOU` channel 6/7 (the actual aileron output) moves smoothly and independently, showing no correlation to the stick at all:
-
-| Time | Pilot roll stick (RCIN) | Aileron output (RCOU) |
-|---|---|---|
-| 255.16s | 988 (full deflection) | 1533 |
-| 255.48s | 988 (full deflection) | 1597 |
-| 255.80s | 988 (full deflection) | 1637 |
-
-The aileron output keeps changing on its own trajectory regardless of what the stick is doing. **The pilot's inputs during this AUTO-mode phase of excursion 1 had no effect on the control surfaces.** The roll recovery that does occur — `DesRoll` walking back from -63.7° to 0° between t=257.6s and t=260.1s — is the autopilot's own attitude controller recovering, not the pilot's stick mixing. The `MODE` log confirms AUTO→FBWA at **t=259.92s**; by that point roll had already reduced to -23.8°, meaning the pilot's manual authority only became active after the worst of excursion 1 had already resolved on its own.
-
-Excursion 1 should be read as: **a stall/overshoot the autopilot itself pulled out of, with the pilot's stick inputs locked out of the loop the entire time by `STICK_MIXING=0`.**
+Pitch tracking during this excursion also degrades (mean error 20.6°, max 64.2° — roughly 20x worse than the 1.1° mean seen on laps 1–2), but the aircraft still comes back to level flight. **Excursion 1 is best read as: an unsafe roll limit allowing the autopilot's turn logic to run away past 80°, arrested by pilot intervention before it became unrecoverable.**
 
 ### Excursion 2 — t ≈ 265.2–275.0s (fatal)
 
-At **t=265.24s** the pilot switches back to AUTO to resume the mission. Within 0.3 seconds (**t=265.56s**), `DesRoll` again snaps to -49°, re-triggering the same turn logic. This time the outcome is worse, not a repeat:
+At **t=265.24s** the pilot returns the aircraft to AUTO to resume the mission. Within 0.3 seconds (**t=265.56s**), `DesRoll` again snaps to a bank angle in the same range as before (-49° to -58°) — again, not itself an unreasonable request. As with excursion 1, the aircraft does not hold this angle: roll reaches **-83.0°**, then departs to **+105.9°** on the opposite side — both well past the 80° roll limit — while pitch drives to **-74.5°** nose-down at t=272.1s.
 
-| Metric | Excursion 1 peak | Excursion 2 peak |
-|---|---|---|
-| Roll | -102.5° | -83.0° / **+105.9°** (departure to the opposite side) |
-| Pitch (nose-down) | -48.1° | **-73.6°** |
-| AOA | 15.4° (brief spike) | **21.1°, sustained** over ~4s |
+This time, the pilot's account is that they waited to see if the autopilot would level out on its own before intervening — consistent with the data. Pitch tracking error during this window is severe and sustained: from **t=270.16s**, `DesPitch` holds at a modest **+15°** (well inside the 33° pitch limit — the autopilot was not demanding anything extreme), while achieved pitch runs away to **-74.5°** by t=272.1s, an error of **107.5°**. Mean pitch tracking error for the full excursion is **28.5°**, nearly triple excursion 1's already-abnormal 20.6°, and the 110° peak error is the worst point in the entire flight. This magnitude of divergence between commanded and achieved pitch — while the command itself stayed modest — is consistent with reduced elevator authority: the control surface was not able to produce the deflection needed to arrest the pitch-down, regardless of what was being asked of it.
 
-Because `STICK_MIXING=0` was still in effect, the pilot again had no control authority while in AUTO — this matches the pilot's recollection of holding the aircraft on heading before deliberately switching modes, since stick input alone could not have altered the flight path. The only way to regain authority was the mode switch itself, and the pilot took that action decisively: `RCIN` pitch is driven hard to 988 (full nose-up) starting at t=271.68s, and `MODE` confirms AUTO→FBWA at **t=271.82s** — this is the "fully pitches up and switches to FBWA" moment described from memory, and it is exactly where the log shows the correction beginning.
+The pilot's decisive correction — full nose-up input and a switch to FBWA — begins at **t=271.68–271.82s**, per `RCIN` and `MODE`. By that point the aircraft was already at -56.6° roll and -70.5° pitch, well outside any envelope the autopilot's own limits considered normal, and — per the account above — considerably later in the upset than excursion 1's intervention, because the pilot was waiting on the autopilot to self-correct as it had the first time. With degraded elevator authority, the aircraft could not be brought back to level in the remaining altitude: the last valid attitude record (**t=274.96s**) shows roll at +105.9° and pitch at -45.6°, immediately preceding ground impact at a recorded ground speed of ~25 m/s.
 
-The problem is not reaction time — it is altitude and energy state at the moment control authority returned. At **t=271.82s**, when FBWA takes effect, the aircraft was already at **-56.6° roll and -70.5° pitch nose-down**, deep into a stall/spiral with airspeed rebuilding through a dive (climbing from 16.7 m/s at t=266s to 27+ m/s by t=273.9s). Unlike excursion 1, there was no autopilot recovery already in progress to meet the pilot halfway — every degree of correction had to come from FBWA control starting from that severely upset state. The aircraft never returns to level flight; the last valid attitude record (**t=274.96s**) shows roll at +105.9° and pitch at -45.6°, consistent with ground impact moments later at a ground speed of ~25 m/s (from `GPS.Spd`, t=275.0s).
+### Cause 1: Unsafe roll limit configuration — **Supported**
 
-### Cause 1: Absurd amount of roll requested by the autopilot — **Supported**
+`ROLL_LIMIT_DEG = 80.0°` permitted the autopilot's own control loop to chase a bank angle well beyond what this airframe could reliably hold, as shown by both excursions overshooting to 102.5° and 105.9° — 25° past the configured ceiling. Laps 1 and 2 stayed within a ~58-60° band and never tested this limit; lap 3's turn geometry (or accumulated disturbance) pushed the aircraft into the excess authority this limit allowed, and once there, the same headroom let each overshoot compound rather than self-limit. This is the common root cause behind both excursions and is directly supported by the roll data relative to the aircraft's own configured limit.
 
-Both excursions exceeded the aircraft's own configured `ROLL_LIMIT_DEG = 80.0°` (roll reached 102.5° and 105.9°) and `PTCH_LIM_MAX_DEG/MIN_DEG = 33°/-35°` (pitch reached -48.1° and -73.6°). These are not close calls — they are 25–40° past the configured envelope. Laps 1 and 2 show the same waypoint turn is achievable within an ~58-60° bank; lap 3's commanded and achieved attitudes are a clear departure from that baseline. This cause is directly supported by the data.
+### Cause 2: Reduced elevator authority (control horn replacement, no re-autotune) — **Supported**
 
-### Cause 2: Incorrect parameter settings — **Supported**
+Pitch tracking error was already abnormal in excursion 1 (20.6° mean vs. 1.1° baseline) and nearly tripled in excursion 2 (28.5° mean, 110° peak) — the worst pitch control performance anywhere in the flight, occurring while the autopilot's own pitch demand stayed modest (+15°, inside the 33° limit). This pattern — large tracking error despite an unremarkable command — points to the control surface itself lacking authority to execute what was asked, consistent with reduced elevator effectiveness following the control horn replacement. Because autotune was not re-run after that repair, the pitch rate gains in the parameter file (`PTCH_RATE_P=0.36`, `PTCH_RATE_I=0.54`) reflect the aircraft's pre-repair elevator response, not its actual post-repair authority — meaning the controller was tuned for a more effective elevator than the one actually installed at the time of the crash. This is a credible and evidence-supported contributing cause, compounding cause 1: even if the roll limit had not allowed the initial overshoot, the reduced pitch authority limited how effectively either excursion could have been arrested once it began.
 
-`STICK_MIXING = 0` is the parameter with the most direct causal role identified in this log: it silently removed the pilot's ability to influence the aircraft while in AUTO, for both excursions, contrary to the default ArduPilot Plane behavior and contrary to what the flight plan implicitly assumed (the report's original description of "FBWA stick mixing privileges" in AUTO mode does not match this aircraft's actual configuration). This is a configuration decision, not a hardware or environmental factor, and it is independently verifiable in the parameter file and confirmed behaviorally in the RCIN/RCOU mismatch above.
+### Cause 3: Delayed pilot intervention during excursion 2 — **Supported, with root cause identified**
 
-### Cause 3: Skewed autotune data / elevator not autotuned — **Partially supported, needs qualification**
-
-`AUTOTUNE_AXES = 3` (Roll + Pitch) indicates autotune was configured to cover both axes if run. The roll rate controller shows `RLL_RATE_P = RLL_RATE_I = 0.20395182` — identical to six decimal places. This is a strong signature of a gain that was never separately tuned (a completed autotune essentially never produces exactly equal P and I terms). The pitch rate controller, by contrast, shows `PTCH_RATE_P = 0.3636` and `PTCH_RATE_I = 0.5399` — these are distinct values, which does not support "elevator not autotuned" as stated; if anything, pitch shows more evidence of independent tuning than roll does. **This cause should be revised to focus on roll-axis rate gains specifically**, rather than the elevator/pitch axis. Whether these roll gains are default firmware values or a stale autotune result cannot be fully confirmed from the parameter file alone, but the P=I equality is a legitimate red flag worth stating plainly rather than treating as proven.
-
-### Cause 4: Delayed response from the safety pilot — **Not supported as originally framed**
-
-The log does not support pilot delay as a cause. During excursion 1, pilot stick input from t=252.8s onward had no effect on the aircraft because `STICK_MIXING=0` disabled it — there was no "response" to be delayed in a way that mattered until the mode switch itself. During excursion 2, the pilot's corrective action (hard nose-up input, mode switch to FBWA) began at t=271.68–271.82s, which is when the second upset was already visually and numerically severe (-56° roll, -70° pitch) — but this reflects how little time and altitude remained after AUTO re-engaged the turn at t=265.56s (roughly 6 seconds from re-trigger to intervention), not slowness in the pilot's decision-making. Given that stick input carried no authority in AUTO mode either way, mode-switch timing was the only lever available to the pilot, and it was used as soon as the upset became apparent. **This cause is not supported by the data and should be removed or reframed** as "insufficient time/altitude margin between AUTO re-engaging the turn and the aircraft entering an unrecoverable state" — a consequence of causes 1 and 2, not an independent pilot error.
+Unlike the general "reaction time" framing considered earlier, the data now supports a specific, non-error explanation for this delay: the pilot's excursion-1 experience showed the aircraft could recover under autopilot control alone, and that expectation reasonably informed a wait-and-see approach during excursion 2. The cost of that wait is measurable — intervention began at t=271.68s, by which point roll was already at -56.6° and pitch at -70.5°, compared to excursion 1 where manual correction was underway well before the aircraft reached a comparably extreme attitude. This delay is real and had consequences, but it is properly understood as a downstream effect of causes 1 and 2 — an unsafe roll limit that made the first excursion recoverable enough to build false confidence, and a weakened elevator that made the second excursion's window for recovery much narrower once intervention did come — rather than an independent lapse in pilot judgment.
 
 ---
 ## 1.4 Prevention
