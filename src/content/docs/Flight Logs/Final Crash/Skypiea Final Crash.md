@@ -10,7 +10,7 @@ sidebar:
 
 This section documents the relevant media to give context to the crash
 
-## 1.1 Full Flight Footage:
+### 1.1 Full Flight Footage:
 <iframe
   width="100%"
   style="aspect-ratio: 16 / 9;"
@@ -25,7 +25,7 @@ This is the full un-edited flight video.
 
 ---
 
-## 1.2 Crash Footage:
+### 1.2 Crash Footage:
 
 <iframe
   width="100%"
@@ -41,13 +41,14 @@ This is the trimmed-down footage of just the crash (and the events leading up to
 
 ---
 
-## 1.3 Flight Logs:
+### 1.3 Flight Logs:
 
 The flight logs were pulled directly from the on board SD card blackbox on the Skypiea flight controller. These logs can be analysed using any plotting software. The plotting software used in this analysis is the [Ardupilot UAV Logger](https://plot.ardupilot.org/#/). To test this yourself, simply drop the log .bin file into the plotter.
 
 ### 1.3.1 Useful resources:
 1. [Crash Flight Log (Download Here)](/flight_logs/00000284.BIN)
-2. [Ardupilot UAV Logger](https://plot.ardupilot.org/#/)
+2. [Skypiea Full Parameter List](/params/00000284.BIN.paaram)
+3. [Ardupilot UAV Logger](https://plot.ardupilot.org/#/)
 
 
 ---
@@ -89,13 +90,15 @@ _We knew the world would not be the same. A few people laughed, a few people cri
 (Im going to stop writing this section since this is turning more into a journal entry)
 
 ---
-## 1.3 What Caused This?
+## 1.3 Probable Causes
 In order to analyze and hopefully detect the point of failure, the most probable causes are listed and individually investigated by examining the logs collected from the flight.
 
 The most probable causes of the crash are:
 1. Unsafe roll limit configuration.
 2. Reduced elevator authority following control horn replacement, uncorrected by re-autotuning.
 3. Delayed safety pilot intervention during the second excursion, driven by hesitation to override the autopilot.
+
+Each probable cause is heavily backed by the collected flight logs. The full analysis and proofs are documented in the following sections. 
 
 ### 1.3.1 Context
 Before we delve into the analysis of the each proposed failure, it is important to review the flight footage to contextualize ourselves. 
@@ -112,16 +115,16 @@ Before we delve into the analysis of the each proposed failure, it is important 
 
 The Green-ish box on the bottom left corner of the screen indicates the RC inputs to the aircraft. This helps identify when stick mixing during AUTO mode is active.
 
-1. The YELLOW line represents the flight path in AUTO mode. After crossing the last waypoint of the third lap and targeting the first waypoint of the fourth lap, the aircraft banks hard
+1. **Excursion 1:** The YELLOW line represents the flight path in AUTO mode. After crossing the last waypoint of the third lap and targeting the first waypoint of the fourth lap, the aircraft banks hard
 2. Pilot levels out the flight and (while in AUTO through stick mixing) and eventually switches to FBWA as represented by the ORANGE flight path.
-3. The pilot switches back to AUTO to continue the mission, and the aircraft demonstrates the same extreme banking.
+3. **Excursion 2:** The pilot switches back to AUTO to continue the mission, and the aircraft demonstrates the same extreme banking.
 4. The pilot fully pitches up and switches to FBWA to level out the flight once again. This time however, the aircraft is too close to the ground.
 
-## 1.3.2 Detailed Event Analysis:
+## 1.4 Detailed Event Analysis:
 
-The flight log (`00000284.BIN`) and parameter file (`00000284_BIN.param`) were cross-referenced against the flight footage to establish an exact timeline. All timestamps below are seconds from log start (`t=0` at arm).
+The flight log (`00000284.BIN`) and parameter file (`00000284_BIN.param`) were cross-referenced against the flight footage to establish an exact timeline. The parameter file contains all the pre-defined values that govern the autopilot behavior. All timestamps below are seconds from log start (`t=0` at arm).
 
-### Baseline: how the same turn behaved on laps 1 and 2
+### 1.4.1 Baseline: how the same turn behaved on laps 1 and 2
 
 The mission was a 5-waypoint loop flown 3 times. The WP1→WP2 leg — the same turn that ultimately fails — was flown cleanly twice before the crash:
 
