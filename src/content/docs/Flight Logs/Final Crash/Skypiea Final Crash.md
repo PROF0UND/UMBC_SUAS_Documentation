@@ -143,6 +143,7 @@ Lap 3 targets a similar turn, but the outcome is markedly different. This establ
 - t=253.4s: Aircraft overshoots to -102.5° roll (_really_ bad), 22.5° past the configured ROLL_LIMIT_DEG = 80.0°.
 - Airspeed drops to 14.85 m/s (below AIRSPEED_MIN = 12 m/s floor).
 - AOA spikes to 15.4°: confirms a genuine stall/overshoot, not a controlled steep turn.
+- At 60° roll, aircraft requires 2G to hold altitutde. The IMU reports 1.7G.
 
 ![Desired Roll vs Cannonical Roll](image-1.png)
 _Desired Roll vs Cannonical Roll_
