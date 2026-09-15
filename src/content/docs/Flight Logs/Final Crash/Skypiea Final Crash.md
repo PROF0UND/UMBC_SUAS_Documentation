@@ -20,6 +20,7 @@ This section documents the relevant media to give context to the crash
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
   allowfullscreen>
 </iframe>
+_Video Credits: Eric Zhuang_
 
 This is the full un-edited flight video.
 
@@ -36,6 +37,7 @@ This is the full un-edited flight video.
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
   allowfullscreen>
 </iframe>
+_Video Credits: Eric Zhuang_
 
 This is the trimmed-down footage of just the crash (and the events leading up to it).
 
