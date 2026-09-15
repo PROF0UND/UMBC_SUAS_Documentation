@@ -4,10 +4,14 @@
 // data ever stored; see src/pages/api/comments.ts for what happens server-side.
 const { id, entry } = Astro.locals.starlightRoute;
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+
+// Rolling out comments one page at a time — add more page ids here as needed.
+const PAGES_WITH_COMMENTS = ['flight-logs/final-crash/skypiea-final-crash'];
+const showComments = turnstileSiteKey && PAGES_WITH_COMMENTS.includes(id);
 ---
 
 {
-  turnstileSiteKey && (
+  showComments && (
     <div class="comments" id="comments-app" data-page-id={id}>
       <hr />
       <h2>Comments</h2>

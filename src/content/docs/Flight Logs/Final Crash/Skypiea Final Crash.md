@@ -212,3 +212,8 @@ These are the most probable causes of the crash. Each assertion is strongly supp
 ## 1.4 Prevention
 1. Testing parameters on a trainer prototype.
 2. Having lead-ins to corner turns.
+
+---
+## 1.5 Leave a Comment!
+
+Use the section below to leave comments. This is completely anonymous.
