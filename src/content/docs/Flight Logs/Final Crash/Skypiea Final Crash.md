@@ -199,10 +199,12 @@ These are the most probable causes of the crash. Each assertion is strongly supp
 
 ### 1.5.3 Cause 3: Delayed pilot intervention in excursion 2
 
-Not a reaction-time failure — a reasonable inference from excursion 1's outcome.
-Excursion 1 showed the aircraft could recover under autopilot alone → informed a wait-and-see approach in excursion 2.
-Cost: intervention at t=271.68s came with roll/pitch already far more extreme than excursion 1's intervention point.
-Downstream effect of Causes 1 & 2, not an independent pilot error.
+- It was not a reaction time failure. A reasonable inference from excursion 1's outcome.
+- Pilot waited too long before takeover on excusion 2.
+- Cost: intervention at t=271.68s came with roll/pitch already far more extreme than excursion 1's intervention point.
+- Downstream effect of Causes 1 & 2 (not an independent pilot error).
 
 ---
 ## 1.4 Prevention
+1. Testing parameters on a trainer prototype.
+2. Having lead-ins to corner turns.
