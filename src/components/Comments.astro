@@ -1,0 +1,235 @@
+---
+// Self-hosted comments: no third-party comment service, no accounts, no tracking.
+// A visitor's name (any text they type — not verified) and comment text are the only
+// data ever stored; see src/pages/api/comments.ts for what happens server-side.
+const { id, entry } = Astro.locals.starlightRoute;
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+---
+
+{
+  turnstileSiteKey && (
+    <div class="comments" id="comments-app" data-page-id={id}>
+      <hr />
+      <h2>Comments</h2>
+
+      <div id="comment-list" aria-live="polite" />
+
+      <form id="comment-form">
+        <label>
+          Name <span class="optional">(optional)</span>
+          <input type="text" name="name" maxlength="80" autocomplete="name" placeholder="Anonymous" />
+        </label>
+
+        {/* Honeypot: hidden from real visitors via CSS, but bots that fill in every field trip it. */}
+        <input
+          type="text"
+          name="website"
+          class="hp-field"
+          tabindex="-1"
+          autocomplete="off"
+          aria-hidden="true"
+        />
+
+        <label>
+          Comment
+          <textarea name="body" maxlength="2000" required placeholder="Leave a comment…" rows="4" />
+        </label>
+
+        <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="auto" />
+
+        <p class="comment-error" role="alert" hidden />
+
+        <button type="submit">Post comment</button>
+      </form>
+
+      <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer />
+    </div>
+  )
+}
+
+<script>
+  const container = document.getElementById('comments-app');
+  if (container) {
+    const pageId = container.dataset.pageId ?? '';
+    const list = document.getElementById('comment-list')!;
+    const form = document.getElementById('comment-form') as HTMLFormElement;
+    const errorEl = form.querySelector<HTMLParagraphElement>('.comment-error')!;
+    const nameStorageKey = 'suas-comment-name';
+
+    type Comment = { id: string; name: string; body: string; createdAt: number };
+
+    function renderComment(comment: Comment): HTMLElement {
+      const item = document.createElement('div');
+      item.className = 'comment';
+
+      const meta = document.createElement('div');
+      meta.className = 'comment-meta';
+      const nameEl = document.createElement('strong');
+      nameEl.textContent = comment.name;
+      const dateEl = document.createElement('time');
+      dateEl.textContent = new Date(comment.createdAt).toLocaleString();
+      meta.append(nameEl, dateEl);
+
+      const bodyEl = document.createElement('p');
+      bodyEl.textContent = comment.body;
+
+      item.append(meta, bodyEl);
+      return item;
+    }
+
+    function renderEmptyState() {
+      const empty = document.createElement('p');
+      empty.className = 'comment-empty';
+      empty.textContent = 'No comments yet — be the first!';
+      list.append(empty);
+    }
+
+    async function loadComments() {
+      const response = await fetch(`/api/comments?pageId=${encodeURIComponent(pageId)}`);
+      if (!response.ok) return;
+      const { comments } = (await response.json()) as { comments: Comment[] };
+      list.replaceChildren(...comments.map(renderComment));
+      if (comments.length === 0) renderEmptyState();
+    }
+
+    try {
+      const savedName = localStorage.getItem(nameStorageKey);
+      if (savedName) (form.elements.namedItem('name') as HTMLInputElement).value = savedName;
+    } catch {
+      // Storage unavailable (private browsing, etc.) — fine, just skip the convenience.
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      errorEl.hidden = true;
+
+      const data = new FormData(form);
+      const submitButton = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+      submitButton.disabled = true;
+
+      try {
+        const response = await fetch('/api/comments', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            pageId,
+            name: data.get('name'),
+            body: data.get('body'),
+            honeypot: data.get('website'),
+            turnstileToken: data.get('cf-turnstile-response'),
+          }),
+        });
+
+        const result = (await response.json()) as { comment?: Comment; error?: string };
+        if (!response.ok) {
+          errorEl.textContent = result.error ?? 'Something went wrong — please try again.';
+          errorEl.hidden = false;
+          return;
+        }
+
+        list.querySelector('.comment-empty')?.remove();
+        if (result.comment) list.append(renderComment(result.comment));
+
+        try {
+          localStorage.setItem(nameStorageKey, String(data.get('name') ?? ''));
+        } catch {
+          // Storage unavailable — comment still posted fine, just skip remembering the name.
+        }
+
+        form.reset();
+        (window as any).turnstile?.reset();
+      } catch {
+        errorEl.textContent = 'Network error — please try again.';
+        errorEl.hidden = false;
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+
+    loadComments();
+  }
+</script>
+
+<style>
+  @layer starlight.components {
+    .comments {
+      margin-top: 3rem;
+    }
+    .comments h2 {
+      font-size: var(--sl-text-h4);
+      color: var(--sl-color-white);
+    }
+    .comment-empty {
+      color: var(--sl-color-gray-3);
+      font-size: var(--sl-text-sm);
+    }
+    .comment {
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--sl-color-hairline);
+    }
+    .comment-meta {
+      display: flex;
+      gap: 0.75rem;
+      align-items: baseline;
+      font-size: var(--sl-text-sm);
+      color: var(--sl-color-gray-3);
+      margin-bottom: 0.25rem;
+    }
+    .comment p {
+      margin: 0;
+      white-space: pre-wrap;
+    }
+    #comment-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+    #comment-form label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      font-size: var(--sl-text-sm);
+      color: var(--sl-color-gray-2);
+    }
+    .optional {
+      color: var(--sl-color-gray-4);
+      font-weight: normal;
+    }
+    #comment-form input[type='text'],
+    #comment-form textarea {
+      font: inherit;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.25rem;
+      border: 1px solid var(--sl-color-gray-5);
+      background: var(--sl-color-black);
+      color: var(--sl-color-white);
+    }
+    .hp-field {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+    #comment-form button {
+      align-self: flex-start;
+      font: inherit;
+      padding: 0.5rem 1.25rem;
+      border-radius: 0.25rem;
+      border: none;
+      background: var(--sl-color-accent);
+      color: var(--sl-color-white);
+      cursor: pointer;
+    }
+    #comment-form button:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+    .comment-error {
+      color: var(--sl-color-red);
+      font-size: var(--sl-text-sm);
+      margin: 0;
+    }
+  }
+</style>

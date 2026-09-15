@@ -1,0 +1,9 @@
+# Local-dev copy of Worker secrets. Copy to `.dev.vars` (gitignored) and fill in.
+# In production these are set with `wrangler secret put <NAME>` instead — never committed.
+
+# Turnstile Secret Key from the same widget as PUBLIC_TURNSTILE_SITE_KEY in .env.
+TURNSTILE_SECRET_KEY=
+
+# Bearer token you make up yourself, used to authorize DELETE /api/comments/<id>
+# for removing spam/abuse. Generate one with: openssl rand -hex 32
+ADMIN_TOKEN=

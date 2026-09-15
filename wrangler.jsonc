@@ -1,12 +1,32 @@
 {
 	"$schema": "./node_modules/wrangler/config-schema.json",
 	"compatibility_date": "2026-07-25",
-	"compatibility_flags": ["global_fetch_strictly_public"],
+	"compatibility_flags": ["global_fetch_strictly_public", "nodejs_compat"],
 	"name": "umbc-suas-documentation",
+	"main": "@astrojs/cloudflare/entrypoints/server",
 	"assets": {
-		"directory": "./dist"
+		"directory": "./dist",
+		"binding": "ASSETS"
 	},
 	"observability": {
 		"enabled": true
-	}
+	},
+	// Run `npx wrangler d1 create umbc-suas-comments` and paste the resulting
+	// database_id here (see README's "Comments" section for full setup steps).
+	"d1_databases": [
+		{
+			"binding": "COMMENTS_DB",
+			"database_name": "umbc-suas-comments",
+			"database_id": "REPLACE_WITH_D1_DATABASE_ID"
+		}
+	],
+	// Throttles comment submissions per visitor IP. No provisioning needed — Cloudflare
+	// manages this counter itself; we never see or store the IP ourselves.
+	"ratelimits": [
+		{
+			"name": "COMMENT_RATE_LIMITER",
+			"namespace_id": "1001",
+			"simple": { "limit": 5, "period": 60 }
+		}
+	]
 }

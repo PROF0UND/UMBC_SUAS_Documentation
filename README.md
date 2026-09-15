@@ -65,6 +65,46 @@ npm run build
 npm run preview
 ```
 
+## Comments
+
+Every doc page has a self-hosted comment box (no third-party service, no accounts). Visitors
+type a name (or leave it blank for "Anonymous") and a comment — nothing else is collected: no
+IP addresses, emails, or cookies are ever stored. See `src/pages/api/comments.ts` and
+`src/components/Comments.astro` for the implementation.
+
+It runs as on-demand routes in the same Cloudflare Worker (via `@astrojs/cloudflare`), backed
+by a D1 database, with Cloudflare Turnstile (a privacy-friendly CAPTCHA) and a per-IP rate
+limit to keep spam out. Every other page stays statically prerendered exactly as before.
+
+**One-time setup** (only needs to be done once per environment):
+
+1. Log in and create the database:
+   ```
+   npx wrangler login
+   npx wrangler d1 create umbc-suas-comments
+   ```
+   Copy the `database_id` it prints into `wrangler.jsonc` (`d1_databases[0].database_id`).
+
+2. Apply the schema:
+   ```
+   npx wrangler d1 migrations apply umbc-suas-comments --remote   # production
+   npx wrangler d1 migrations apply umbc-suas-comments --local    # local dev
+   ```
+
+3. Create a free [Turnstile](https://dash.cloudflare.com/?to=/:account/turnstile) widget for
+   the site's domain, then set:
+   - `PUBLIC_TURNSTILE_SITE_KEY` in `.env` (copy from `.env.example`) — used at build time.
+   - `TURNSTILE_SECRET_KEY` — locally in `.dev.vars` (copy from `.dev.vars.example`); in
+     production with `npx wrangler secret put TURNSTILE_SECRET_KEY`.
+
+4. (Optional) Set an `ADMIN_TOKEN` secret the same way, to enable removing a bad comment:
+   ```
+   curl -X DELETE -H "Authorization: Bearer <ADMIN_TOKEN>" https://<site>/api/comments/<id>
+   ```
+
+The comment box stays hidden on any page/build where `PUBLIC_TURNSTILE_SITE_KEY` isn't set, so
+none of this blocks normal doc editing before it's configured.
+
 ## Commands reference
 
 | Command                    | Action                                                  |
