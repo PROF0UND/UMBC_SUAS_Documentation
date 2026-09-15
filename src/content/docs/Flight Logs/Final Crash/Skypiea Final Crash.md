@@ -154,7 +154,7 @@ _Desired Roll vs Cannonical Roll_
 #### 1.4.2.2 Pilot correction:
 
 - Achieved roll correlates strongly with pilot stick input at zero time lag (r = -0.70).
-- Achieved roll correlates weakly with autopilot DesRoll, which lags 1.3s behind actual attitude — the autopilot was reacting to where the plane already was, not leading it back to level.
+- Achieved roll correlates weakly with autopilot DesRoll, which lags 1.3s behind actual attitude. The autopilot was reacting to where the plane already was, not leading it back to level.
 - Roll is walked back from -90°+ to -23.8° by manual correction before the mode switch.
 - t=259.92s: MODE log confirms switch to FBWA, logged only after the pilot had already recovered the aircraft.
 
