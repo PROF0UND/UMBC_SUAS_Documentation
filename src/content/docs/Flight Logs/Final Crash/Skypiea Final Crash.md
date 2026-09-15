@@ -10,7 +10,10 @@ sidebar:
 
 This section documents the relevant media to give context to the crash
 
-### 1.1 Full Flight Footage:
+### 1.1 TL;DR:
+ The [reasons for the crash](#15-cause-summary) are outlined in this seprate section.
+
+### 1.2 Full Flight Footage:
 <iframe
   width="100%"
   style="aspect-ratio: 16 / 9;"
@@ -20,13 +23,12 @@ This section documents the relevant media to give context to the crash
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
   allowfullscreen>
 </iframe>
+
 _Video Credits: Eric Zhuang_
 
 This is the full un-edited flight video.
 
----
-
-### 1.2 Crash Footage:
+### 1.3 Crash Footage:
 
 <iframe
   width="100%"
@@ -37,17 +39,16 @@ This is the full un-edited flight video.
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
   allowfullscreen>
 </iframe>
+
 _Video Credits: Eric Zhuang_
 
 This is the trimmed-down footage of just the crash (and the events leading up to it).
 
----
-
-### 1.3 Flight Logs:
+### 1.4 Flight Logs:
 
 The flight logs were pulled directly from the on board SD card blackbox on the Skypiea flight controller. These logs can be analysed using any plotting software. The plotting software used in this analysis is the [Ardupilot UAV Logger](https://plot.ardupilot.org/#/). To test this yourself, simply drop the log .bin file into the plotter.
 
-### 1.3.1 Useful resources:
+### 1.4.1 Useful resources:
 1. [Crash Flight Log (Download Here)](/flight_logs/00000284.BIN)
 2. [Skypiea Full Parameter List](/params/00000284.BIN.paaram)
 3. [Ardupilot UAV Logger](https://plot.ardupilot.org/#/)
