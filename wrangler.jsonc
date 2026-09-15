@@ -18,10 +18,9 @@
 	// database_id here (see README's "Comments" section for full setup steps).
 	"d1_databases": [
 		{
-			"binding": "umbc_suas_comments",
+			"binding": "COMMENTS_DB",
 			"database_name": "umbc-suas-comments",
-			"database_id": "5c265408-ac6a-4bfc-b733-df26ce67335b",
-			"remote": true
+			"database_id": "5c265408-ac6a-4bfc-b733-df26ce67335b"
 		}
 	],
 	// Throttles comment submissions per visitor IP. No provisioning needed — Cloudflare
