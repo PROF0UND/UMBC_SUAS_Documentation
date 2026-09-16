@@ -185,14 +185,32 @@ Bottom line: With degraded elevator authority, there wasn't enough altitude left
 
 These are the most probable causes of the crash. Each assertion is strongly supported by the reflection performed on the UAV's log. The casues were first shortlisted and then analysed.
 
-### 1.5.1 Cause 1: Unsafe roll limit configuration
+### 1.5.1 Cause 1: Unsafe Navigation Controller Configuration
+
+- The `Navigation Controller` in Ardupilot is the part of the autopilot that decides how much to turn so the plane follows the line between waypoints. 
+- The `NAV L1 Controller` specifically controls the bank angle of the plane. It compares the aircraft's position with the line between the previous and the next waypoints, and outputs a desired bank angle.
+- This controller is what was responsible for the dangerous desired angle the aircraft tried to achieve, and is what led to the stall.
+- This controller is mainly governed by the `NAV_L1_PERIOD` parameter ([Docs](https://ardupilot.org/plane/docs/navigation-tuning.html)). This parameter sets the time (in seconds) of one full swing back and forth across the line between adjecent waypoints, as if the plane weaved from one side to the other while settling onto it.
+  - Short period: the plane tries to get back quickly, so it banks hard. This results in sharp turns.
+  - Long period: the plane corrects more slowly, so it banks gently. This results in more gradual and gentler turns.
+- A safe value for this parameter is the default value of `17`. Skypiea's `NAV_L1_PERIOD` was set to `10`.
+- The low value was set since the mapping mission of the competition required tighter turns for appropriate stitching. As a result, this value was set to `10` based on a complete guess verified by a short amount of simulation runs and no actual flight verifications. The value was not verified by any test flights on real prototypes.
+- Added to this, at the alarming bank angle on excursions 1 and 2 demanded by the `NAVIGATION CONTROLLER`, the wing needed to carry about twice the plane's weight to hold altitude. The angle also increases the stall speed by about 40%. 
+- Skypiea's airspeed was too low for that (~17 m/s).
+- During the stall on excursion 2, the ailerons lost all control authority and were unable to stabilize the flight. 
+
+![Airspeed comparison](Airspeed_comparison.png)
+
+_The graph shows the difference between airspeed during the excursion 1 turn and the one on the lap before._
+
+### 1.5.2 Cause 2: Unsafe Roll Limit Configuration
 
 - `ROLL_LIMIT_DEG = 80.0` let the autopilot chase bank angles the airframe couldn't hold.
 - Both excursions overshot it by ~25° (102.5° and 105.9°).
 - Laps 1–2 never tested this limit (stayed in a 58–60° band). The successful turns were pure luck.
 - Common root cause behind both excursions.
 
-### 1.5.2 Cause 2: Reduced elevator authority (control horn replacement, no re-autotune)
+### 1.5.3 Cause 3: Reduced Elevator Authority (control horn replacement, no re-autotune)
 
 - Pitch tracking error: 20.6° (excursion 1) and 28.5° (excursion 2, 110° peak).
 - Autopilot commanded +15 
@@ -201,7 +219,7 @@ These are the most probable causes of the crash. Each assertion is strongly supp
 
 ![Pitch Tracking Error](image-4.png)
 
-### 1.5.3 Cause 3: Delayed pilot intervention in excursion 2
+### 1.5.4 Cause 4: Delayed Pilot Intervention in Excursion 2
 
 - It was not a reaction time failure. A reasonable inference from excursion 1's outcome.
 - Pilot waited too long before takeover on excusion 2.
