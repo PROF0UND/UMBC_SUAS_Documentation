@@ -61,7 +61,7 @@ The channels on the transmitter are mapped as follows:
 
   To bind the receiver, you need to:
   1. Keep the receiver powered until the LED flashed rapidly.
-  2. Go to the Wifi settings on your phone/laptop, connect to ExpressLRS. The password is `expresslrs`.
+  2. Go to the Wifi settings on your phone/laptop, connect to `ExpressLRS RX`. The password is `expresslrs`.
   3. Go to `10.0.0.1` on the browser.
   4. Enter the same Bind Phrase set on your transmitter.
   5. Reboot.  

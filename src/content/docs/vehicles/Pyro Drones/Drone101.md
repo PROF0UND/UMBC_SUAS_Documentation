@@ -8,7 +8,7 @@ sidebar:
 
 ## Equipment:
 1. Drone frame
-2. Drone Flight controller (HDZero Gamma AIO – G473 FC + 45A AM32 ESC + ELRS RX)
+2. Drone Flight controller ([HDZero Gamma AIO – G473 FC + 45A AM32 ESC + ELRS RX](https://docs.hd-zero.com/gamma-introduction))
 3. 4 motors
 4. 4 propellers
 5. Battery: 11.1V, 3s, 850mAh
@@ -91,8 +91,18 @@ Here is the fully assembled drone:
 ![assembled drone](image-9.png)
 
 
-
 ## Step 8: Programming time
+
+### Binding the Receiver
+  To bind the receiver, you need to:
+  1. Keep the receiver powered until the LED flashed GREEN.
+  2. Go to the Wifi settings on your phone/laptop, connect to `ExpressLRS RX`. The password is `expresslrs`.
+  3. Go to `10.0.0.1` on the browser.
+  4. Enter the same Bind Phrase set on your transmitter.
+  5. Reboot.  
+
+  Set the transmitter to model STD.
+  The receiver should be bound with the transmitter now.
 
 
 
