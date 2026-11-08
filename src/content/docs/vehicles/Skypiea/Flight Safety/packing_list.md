@@ -10,5 +10,5 @@ It is important to have a packing list so that you know what to take to the flyi
 
 This is the flight list we usually use to pack stuff.
 
-<iframe src="/pdfs/safety_checklist.pdf" width="100%" height="800px" style="border: none; display: block; min-height: 600px;"></iframe>
+<iframe src="/pdfs/suas_25-26_packing_checklist.pdf" width="100%" height="800px" style="border: none; display: block; min-height: 600px;"></iframe>
 
